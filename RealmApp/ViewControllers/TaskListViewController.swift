@@ -75,6 +75,7 @@ class TaskListViewController: UITableViewController {
         
         let doneAction = UIContextualAction(style: .normal, title: "Done") { _, _, isDone in
             StorageManager.shared.done(taskList)
+            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
             tableView.reloadRows(at: [indexPath], with: .automatic)
             isDone(true)
         }
