@@ -1,23 +1,22 @@
 //
-//  AlertController.swift
+//  Extention + UIAlertController.swift
 //  RealmApp
 //
-//  Created by Alexey Efimov on 12.03.2020.
-//  Copyright © 2020 Alexey Efimov. All rights reserved.
+//  Created by ikorobov on 19.11.2022.
+//  Copyright © 2022 Alexey Efimov. All rights reserved.
 //
 
 import UIKit
 
 extension UIAlertController {
-    
     static func createAlert(withTitle title: String, andMessage message: String) -> UIAlertController {
         UIAlertController(title: title, message: message, preferredStyle: .alert)
     }
-        
+    
     func action(with taskList: TaskList?, completion: @escaping (String) -> Void) {
         
         let doneButton = taskList == nil ? "Save" : "Update"
-                
+        
         let saveAction = UIAlertAction(title: doneButton, style: .default) { _ in
             guard let newValue = self.textFields?.first?.text else { return }
             guard !newValue.isEmpty else { return }
@@ -35,7 +34,7 @@ extension UIAlertController {
     }
     
     func action(with task: Task?, completion: @escaping (String, String) -> Void) {
-                        
+        
         let title = task == nil ? "Save" : "Update"
         
         let saveAction = UIAlertAction(title: title, style: .default) { _ in

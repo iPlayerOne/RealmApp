@@ -55,11 +55,13 @@ class TasksViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        let task = indexPath.section == 0 ? currentTasks[indexPath.row] : completedTasks[indexPath.row]
+        let task = indexPath.section == 0
+            ? currentTasks[indexPath.row]
+            : completedTasks[indexPath.row]
         
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
-            StorageManager.shared.deleteTask(task)
+            StorageManager.shared.delete(task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
@@ -74,7 +76,7 @@ class TasksViewController: UITableViewController {
         
         
         let doneAction = UIContextualAction(style: .normal, title: title) { _, _, isDone in
-            StorageManager.shared.doneTask(task)
+            StorageManager.shared.done(task)
             tableView.moveRow(at: indexPath, to: nextSection)
             tableView.reloadRows(at: [indexPath], with: .automatic)
             isDone(true)
@@ -98,15 +100,14 @@ extension TasksViewController {
         
         let alert = UIAlertController.createAlert(withTitle: title, andMessage: "What do you want to do?")
         
-        alert.action(with: task) { [weak self] taskTitle, note in
+        alert.action(with: task) { newValue, note in
             if let task = task, let completion = completion {
-                StorageManager.shared.editTask(task, newValue: taskTitle, note: note)
+                StorageManager.shared.rename(task, to: newValue, withNote: note)
                 completion()
             } else {
-                self?.save(task: taskTitle, withNote: note)
+                self.save(task: newValue, withNote: note)
             }
         }
-        
         present(alert, animated: true)
     }
     

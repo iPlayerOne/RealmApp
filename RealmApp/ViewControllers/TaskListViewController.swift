@@ -39,21 +39,8 @@ class TaskListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TaskListCell", for: indexPath)
-        var content = cell.defaultContentConfiguration()
         let taskList = taskLists[indexPath.row]
-        let undoneTasks = taskList.tasks.filter("isComplete = false")
-        content.text = taskList.name
-        if taskList.tasks.isEmpty {
-            cell.accessoryType = .none
-            content.secondaryText = "0"
-        } else if undoneTasks.isEmpty {
-            cell.accessoryType = .checkmark
-            content.secondaryText = ""
-        } else {
-            cell.accessoryType = .none
-            content.secondaryText = "\(taskList.tasks.count)"
-        }
-        cell.contentConfiguration = content
+        cell.configure(with: taskList)
         return cell
     }
     
@@ -75,7 +62,6 @@ class TaskListViewController: UITableViewController {
         
         let doneAction = UIContextualAction(style: .normal, title: "Done") { _, _, isDone in
             StorageManager.shared.done(taskList)
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
             tableView.reloadRows(at: [indexPath], with: .automatic)
             isDone(true)
         }
@@ -95,15 +81,10 @@ class TaskListViewController: UITableViewController {
     }
     
     @IBAction func sortingList(_ sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-            case 0:
-                taskLists = taskLists.sorted(byKeyPath: "date")
-                tableView.reloadData()
-            default:
-                taskLists = taskLists.sorted(byKeyPath: "name")
-                tableView.reloadData()
-        }
-        
+        taskLists = sender.selectedSegmentIndex == 0
+            ? taskLists.sorted(byKeyPath: "date")
+            : taskLists.sorted(byKeyPath: "name")
+        tableView.reloadData()
     }
     
     @objc private func addButtonPressed() {
